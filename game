@@ -1,0 +1,86 @@
+#!/bin/bash
+
+#Guessing Game
+
+while true; do	#Infinite Loop
+	clear
+	echo -en "\n\n\n\n\n$(tput setaf 4)"
+	figlet -c "GUESSING GAME"
+	echo -en "$(tput setaf 9)"
+	while true; do	#Ask user to reset highest score.
+		echo -en "\n\n\n\t\tDo you want to reset the highest score? [Y/N] "
+		mplayer /home/MP2/etc/reset.wav >>/dev/null 2>>/dev/null
+		read reset
+		case $reset in
+			[Yy] ) >/home/MP2/highest 		
+				echo "0">>/home/MP2/highest	#Resetting content of highest file
+				echo -en "\t\tReset Successful!"
+				mplayer /home/MP2/etc/resetsuccess.wav >>/dev/null 2>>/dev/null
+				read response
+				clear
+				break;;
+			[Nn] )	clear; break;;
+			* )	echo -en "\t\tPlease answer Y or N."
+				mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null;;
+		esac
+	done
+	>/home/MP2/randomFile	#Resetting content of randomFile file
+	perl -MList::Util=shuffle -le '@a = shuffle 1..10; print shift @a for 1..10'>>/home/MP2/randomFile	#Generating 10 non-repeating permutations
+	for i in 1 2 3 4 5 6 7 8 9 10
+		do
+			highest=$(cat /home/MP2/highest|head -1)
+			echo -e "LEVEL $i\t\t\t\t\t\tHighest Score: $highest/10\n"
+			random=$(nl -s ")" /home/MP2/randomFile|tr -s "\t" " "|grep "^ $i)"|cut -f2 -d")")
+			echo -en "$(tput setaf 3)"
+			cowsay -f stegosaurus "$(echo -en "$(tput setaf 1)"; cat /home/MP2/questions|grep "\[$random\]"|cut -f1 -d:; echo -en "$(tput setaf 3)")"	#Displaying questions via stegosaurus animal
+			echo -en "$(tput setaf 9)"
+			mplayer /home/MP2/etc/"$random".wav >>/dev/null 2>>/dev/null
+			echo -en "\nAnswer: "
+			read answer
+			if [[ "$answer" = "$(cat /home/MP2/questions|grep "\[$random\]"|cut -f2 -d:)" ]]	#Checking of the correct answer
+				then
+					clear
+					echo -en "$(tput setaf 2)\n\n\n\n\n\n\n"
+					figlet -c "Correct!"
+					echo -en "$(tput setaf 9)"
+					mplayer /home/MP2/etc/correct.wav >>/dev/null 2>>/dev/null
+					mplayer /home/MP2/etc/effects.mp3 >>/dev/null 2>>/dev/null
+			else
+				clear
+				echo -en "$(tput setaf 1)\n\n\n\n\n\n\n"
+				figlet -c "Incorrect!"
+				echo -en "$(tput setaf 9)"
+				mplayer /home/MP2/etc/incorrect.wav >>/dev/null 2>>/dev/null
+				mplayer /home/MP2/etc/lose.mp3 >>/dev/null 2>>/dev/null
+				i=$(echo "$i-1"|bc)
+				echo -en "\n\t\t\t\tYour score is: $i"
+				break
+			fi
+			clear
+		done
+	if [[ "$i" = "10" ]]	#Checking if the user gets a perfect score.
+		then
+			echo -en "$(tput setaf 4)"
+			figlet -c "Congratulations!"
+			echo -en "$(tput setaf 9)"
+			echo -e "\n\t\t\tYou finished the game without mistakes.\n"
+			mplayer /home/MP2/etc/congratulations.wav >>/dev/null 2>>/dev/null
+			mplayer /home/MP2/etc/effects.mp3 >>/dev/null 2>>/dev/null
+	fi
+	if [[ "$i" > "$highest" ]]	#Checking if the user achieves the highest score.
+		then
+			>/home/MP2/highest
+			echo "$i">>/home/MP2/highest
+	fi
+	while true; do	#Asking the user to play again.
+		echo -en "\n\t\t\t\tPlay Again? [Y/N] "
+		mplayer /home/MP2/etc/playagain.wav >>/dev/null 2>>/dev/null
+		read choice
+		case $choice in
+		[Yy] ) break;;
+		[Nn] ) break 2;;
+		 * )	echo -en "\t\t\t\tPlease answer Y or N."
+			mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null;;
+	   	esac
+	done
+done

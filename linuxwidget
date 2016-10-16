@@ -1,0 +1,56 @@
+#!/bin/bash
+
+function intro
+{
+	echo -en "$(tput setaf 1)"
+	echo -en "$(tput civis)"
+	figlet -c "Linux System and Network Administration"
+	echo -en "$(tput setaf 9)"
+	echo -en "\n\n\t\t\t\tPresents"
+	mplayer /home/MP2/etc/intro2.mp3>>/dev/null 2>>/dev/null
+	clear
+	echo -en "\n\n\n\n\n\n\n"
+	echo -en "$(tput setaf 4)"
+	figlet -c "Linux Widget"
+	echo -en "$(tput setaf 9)"
+	echo -en "\n\n\t  * Calendar - CPU Meter - Currency Converter - Guessing Game * "
+	mplayer /home/MP2/etc/intro3.mp3>>/dev/null 2>>/dev/null
+	clear
+	echo -en "\n\n\n\n\n\n\n\n\n\n\n\t\t\tA Bash Script By: De Jesus, Jose Mari B."
+	mplayer /home/MP2/etc/intro4.mp3>>/dev/null 2>>/dev/null
+	clear
+	echo -en "$(tput cnorm)"
+}
+
+clear
+intro
+while true; do
+	clear
+	echo -en "\n\n\n$(tput setaf 3)"
+	figlet -c "Linux Widget"
+	echo -en "$(tput setaf 9)"
+	echo -en "\n\n\t\t\t\t[1] Calendar\n\t\t\t\t"
+	echo -en "[2] CPU Meter\n\t\t\t\t"
+	echo -en "[3] Currency Converter\n\t\t\t\t"
+	echo -en "[4] Guessing Game\n\n\t\t\t\t"
+	echo -en "$(tput setaf 1)"
+	echo -en "[5] Exit\n\n\t\t\t\t"
+	echo -en "$(tput setaf 9)"
+	echo -en "Enter Choice: "
+	mplayer /home/MP2/etc/choice.wav>>/dev/null 2>>/dev/null
+	read input
+	case $input in
+			[1] )	mplayer /home/MP2/etc/calendar.wav>>/dev/null 2>>/dev/null
+				/home/MP2/calendaryo;;
+			[2] ) 	mplayer /home/MP2/etc/cpumeter.wav>>/dev/null 2>>/dev/null
+				/home/MP2/process3;;
+			[3] ) 	mplayer /home/MP2/etc/converter.wav>>/dev/null 2>>/dev/null
+				/home/MP2/converter;;
+			[4] ) 	mplayer /home/MP2/etc/game.wav>>/dev/null 2>>/dev/null
+				/home/MP2/game;;
+			[5] ) 	mplayer /home/MP2/etc/bye.wav>>/dev/null 2>>/dev/null
+				exit;;
+			 * )	echo -en "\t\t\t\tPlease enter a given choice."
+				mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null;;
+	esac
+done

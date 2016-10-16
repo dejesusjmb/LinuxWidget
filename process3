@@ -1,0 +1,121 @@
+#!/bin/bash
+
+while true; do
+clear
+echo -en "\n\n\n\n$(tput setaf 4)"
+figlet -c "CPU METER"
+echo -en "$(tput setaf 9)"
+echo -en "\n\t\t\t\t[1] Processes\n\t\t\t\t[2] End Task\n\t\t\t\t[3] Performance\n\t\t\t\t[4] Information\n\n\t\t\t\tEnter Choice: "
+mplayer /home/MP2/etc/choice.wav>>/dev/null 2>>/dev/null
+read input
+if [[ "$input" = "1" ]]
+	then
+	mplayer /home/MP2/etc/processes.wav>>/dev/null 2>>/dev/null
+	for i in 1 2 3 4 5 6 7 8 9 10
+	do
+		clear
+		ps aux|tr -s " "|cut -f1-4,11 -d" "|head -1|tr " " "\t"
+		ps aux|tr -s " "|cut -f1-4,11 -d" "|sort -rnk3 -k4 -t" "|head -15|tr " " "\t"
+		totalCPU=$(ps aux|tr -s " "|cut -f3 -d" "|sed 1d|sort -rn|tr "\n" "+")
+		totalMem=$(ps aux|tr -s " "|cut -f4 -d" "|sed 1d|sort -rn|tr "\n" "+")
+		echo -en "\nTotal no. of running processes: \t"
+		echo "$(ps aux|sed 1d|wc -l)"	
+		echo -en "Total CPU Usage: \t\t\t"
+		echo "$(echo "${totalCPU%?}"|bc) %"
+		echo -en "Total Memory Usage: \t\t\t"
+		echo "$(echo "${totalMem%?}"|bc) %"
+		sleep 1
+		i=i++
+	done
+
+elif [[ "$input" = "2" ]]
+	then
+		mplayer /home/MP2/etc/endtask.wav>>/dev/null 2>>/dev/null
+		clear
+		echo -en "$(tput setaf 1)\n\n\n"
+		figlet -c "End Task"
+		echo -e "$(tput setaf 9)"
+		echo -e "\n\n\tInstructions: Look for the PID of the process you want to end."
+		echo -en "\t\t\tPress anything to continue."
+		mplayer /home/MP2/etc/endtaskinstruction.wav>>/dev/null 2>>/dev/null
+		read input
+		clear
+		ps aux|tr -s " "|cut -f1,2,11 -d" "|nl -s ") "|pr -t2|less
+		echo -en "$(tput setaf 1)\n\n\n"
+		figlet -c "End Task"
+		echo -e "$(tput setaf 9)"
+		echo -en "\n\t\t\t\tEnter PID: "
+		mplayer /home/MP2/etc/pid.wav>>/dev/null 2>>/dev/null
+		read pid
+		kill -9 $pid 2>>/dev/null
+		if [[ "$?" != "0" ]]
+			then
+				echo -e "\n\t\t\t\tInvalid PID."
+				mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null
+			else
+				echo -e "\n\t\t\t\tProcess Terminated."
+				mplayer /home/MP2/etc/terminated.wav>>/dev/null 2>>/dev/null
+		fi
+		
+elif [[ "$input" = "3" ]]
+	then
+		mplayer /home/MP2/etc/performance.wav>>/dev/null 2>>/dev/null
+		clear
+		echo -en "$(tput setaf 1)"
+		figlet -c "Performance"
+		echo -e "$(tput setaf 9)"
+		echo -e "\t\tTotal Memory:\t\t\t $(free -h|sed 1d|head -1|tr -s " "|cut -f2 -d" ")B"
+		echo -e "\t\tUsed Memory:\t\t\t $(free -h|sed 1d|head -1|tr -s " "|cut -f3 -d" ")B"
+		echo -e "\t\tFree Memory:\t\t\t $(free -h|sed 1d|head -1|tr -s " "|cut -f4 -d" ")B"
+		echo -e "\t\tCached Memory:\t\t\t $(free -h|sed 1d|head -1|tr -s " "|cut -f7 -d" ")B"
+		echo -e "\t\tTotal Virtual Memory:\t\t $(free -h|tail -1|tr -s " "|cut -f2 -d" ")B"
+		echo -e "\t\tUsed Virtual Memory:\t\t $(free -h|tail -1|tr -s " "|cut -f3 -d" ")B"
+		echo -e "\t\tAvailable Virtual Memory:\t $(free -h|tail -1|tr -s " "|cut -f4 -d" ")B"
+		echo -e "\t\tNo. of System Handles:\t\t $(cat /proc/sys/fs/file-nr|tr "\t" " "|cut -f1 -d" ")"
+		echo -e "\t\tNo. of Threads:\t\t\t $(ps -eaFm|wc -l)"
+		echo -e "\t\tNo. of Processes:\t\t $(ps aux|wc -l)"
+		echo -e "\t\tUptime:\t\t\t\t$(uptime|cut -f1 -d",")"
+		echo -e "\t\tNo. of Users Logged in:\t\t $(who | awk '{print $1}'|uniq|wc -l)"
+		#totalJCPU=$(w|sed 1d|sed 1d|tr -s " "|cut -f6 -d" "|tr "\n" "+"|tr -d "s")
+		#echo -e "Total JPCU: $(echo "${totalJCPU%?}"|bc)"
+
+
+		
+
+
+elif [[ "$input" = "4" ]]
+	then
+		mplayer /home/MP2/etc/information.wav>>/dev/null 2>>/dev/null
+		clear
+		echo -en "$(tput setaf 1)"
+		figlet -c "Information"
+		echo -e "$(tput setaf 9)"
+		echo -e "\tCPU Model Name:\t\t$(cat /proc/cpuinfo|grep "model name"|head -1|tr -s "\t" " "|cut -f2 -d":")"
+		echo -e "\tNo. of Processors:\t $(cat /proc/cpuinfo|grep "processor"|wc -l)"
+		echo -e "\tCache Size:\t\t$(cat /proc/cpuinfo|grep "cache size"|head -1|tr -s "\t" " "|cut -f2 -d:)"
+		echo -e "\tCPU Speed:\t\t $(cat /proc/cpuinfo|grep "model name"|tr -s "\t" " "|head -1|cut -f11 -d" ")"
+		echo -e "\tOperating System:\t $(cat /proc/version_signature)"
+		echo -e "\tMemory Capacity:\t $(free -h|sed 1d|head -1|tr -s " "|cut -f2 -d" ")B"
+else
+	echo -en "\t\t\t\tInvalid Choice."
+	mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null
+
+fi
+
+	while true; do	#Asking the user to exit.
+		echo -en "$(tput setaf 1)"
+		echo -en "\n\t\t\t\tDo you want to exit? [Y/N] "
+		echo -en "$(tput setaf 9)"
+		mplayer /home/MP2/etc/quit.wav >>/dev/null 2>>/dev/null
+		read choice
+		case $choice in
+			[Yy] ) 	break 2;;
+			[Nn] ) 	break;;
+			 * )	echo -en "$(tput setaf 1)"
+				echo -en "\t\t\t\tPlease answer Y or N."
+				echo -en "$(tput setaf 9)"
+				mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null;;
+		esac
+	done
+done
+exit

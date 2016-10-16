@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#Calendar
+
+function printCal
+{
+ clear
+ i=1
+ while (( i < 28 ))
+	do
+		if [[ "$i" = "3" || "$i" = "12" || "$i" = "21" ]]
+			then
+				echo -en "$(tput setaf 1)"
+		fi
+		ncal $year|nl -b a -s ")"|grep " $i)"|cut -f2 -d")"
+		echo -en "$(tput setaf 9)"
+		i=$(echo "$i+1"|bc)
+	done
+
+}
+
+function quit
+{
+	echo -en "\nDo you want to exit? [Y/N] "
+	read choice
+	if [[ "$choice" = "N" || "$choice" = "n" ]]
+		then
+			continue
+		elif [[ "$choice" = "Y" || "$choice" = "y" ]]
+			then
+				exit
+		else
+			echo -n "Invalid choice. Press anything to continue."
+			read choice
+	fi
+}
+
+year=2013
+printCal
+echo -e "\n[1] Change date\t\t[2] Set Reminder\t[3] Display Year"
+echo -en "Enter Choice: "
+read choice
+if [[ "$choice" = "3" ]]
+	then
+		echo -en "Enter Year: "
+		read year
+		printCal
+#	elif [[ "$choice" = "2" ]]
+#		then
+#	elif [[ "$choice" = "1" ]]
+#		then
+
+	else
+		echo "Invalid choice. Press anything to continue."
+		read choice
+		calendaryo
+fi
+quit
+calendaryo
+exit

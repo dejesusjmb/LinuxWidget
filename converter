@@ -1,0 +1,59 @@
+#!/bin/bash
+
+#Currency Converter
+
+while true; do	#Infinite Loop
+	clear
+	echo -en "$(tput setaf 4)"
+	figlet -c "CURRENCY CONVERTER"
+	echo -en "$(tput setaf 9)"
+	cat /home/MP2/currency
+	echo -en "$(tput setaf 6)"
+	echo -e "\n\tType PHP to display exchange rates for PHP."
+	echo -en "$(tput setaf 9)"
+	echo -en "\tEnter Convertion Expression (eg. 100 USD TO PHP): "
+	mplayer /home/MP2/etc/expression.wav >>/dev/null 2>>/dev/null
+	read expression	#Input expression
+	amount=$(echo "$expression"|cut -f1 -d" ")	#Get values from expression position
+	from=$(echo "$expression"|cut -f2 -d" ")
+	amount=$(echo $amount|tr [:lower:] [:upper:])	#Convert to upper case
+	to=$(echo "$expression"|cut -f4 -d" ")
+	from=$(echo $from|tr [:lower:] [:upper:])
+	to=$(echo $to|tr [:lower:] [:upper:])
+	if [[ "$amount" = "PHP" ]]	#Verify if user wants to display PHP Conversion
+		then
+			clear
+			echo -en "$(tput setaf 4)"
+			figlet -c "CURRENCY CONVERTER"
+			echo -en "$(tput setaf 9)"
+			echo -e "\t\t\t$(tput setaf 1) USD TO PHP = 43.6999335426$(tput setaf 9)\n"
+			cat /home/MP2/pesoConversion	#Display currency conversion from file pesoConversion
+			echo -en "\n\tPress anything to continue. "
+			read choice
+	elif [[ ("$from" = "USD" || "$from" = "EUR" || "$from" = "GBP" || "$from" = "INR" || "$from" = "AUD" || "$from" = "CAD" || "$from" = "AED" || "$from" = "MYR" || "$from" = "CHF" || "$from" = "CNY" || "$from" = "THB" || "$from" = "SAR" || "$from" = "NZD" || "$from" = "JPY" || "$from" = "SGD" || "$from" = "PHP" || "$from" = "TRY" || "$from" = "HKD" || "$from" = "IDR" || "$from" = "ZAR" || "$from" = "MXN" || "$from" = "SEK" || "$from" = "BRL" || "$from" = "HUF" || "$from" = "PKR" || "$from" = "QAR" || "$from" = "OMR" || "$from" = "KWD" || "$from" = "DKK" || "$from" = "NOK") && ("$to" = "USD" || "$to" = "EUR" || "$to" = "GBP" || "$to" = "INR" || "$to" = "AUD" || "$to" = "CAD" || "$to" = "AED" || "$to" = "MYR" || "$to" = "CHF" || "$to" = "CNY" || "$to" = "THB" || "$to" = "SAR" || "$to" = "NZD" || "$to" = "JPY" || "$to" = "SGD" || "$to" = "PHP" || "$to" = "TRY" || "$to" = "HKD" || "$to" = "IDR" || "$to" = "ZAR" || "$to" = "MXN" || "$to" = "SEK" || "$to" = "BRL" || "$to" = "HUF" || "$to" = "PKR" || "$to" = "QAR" || "$to" = "OMR" || "$to" = "KWD" || "$to" = "DKK" || "$to" = "NOK") ]]
+		then
+			echo -en "$(tput setaf 1)"
+			echo -en "\n\t\t\t\t$amount "
+			cat /home/MP2/conversiontable|grep "$from TO $to"|cut -f1 -d" "|tr -d "\n"
+			echo -n " = "
+			cat /home/MP2/conversiontable|grep "$from TO $to"|cut -f2 -d:|xargs echo "scale=2; $amount*1/"|bc -l|tr -d "\n"
+			echo -n " "
+			cat /home/MP2/conversiontable|grep "$from TO $to"|cut -f3 -d" "
+			echo -en "$(tput setaf 9)"
+	else
+		echo -e "\tInvalid choice."
+		mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null
+	fi
+
+	while true; do	#Asking the user to exit.
+		echo -en "\n\tDo you want to exit? [Y/N] "
+		mplayer /home/MP2/etc/quit.wav >>/dev/null 2>>/dev/null
+		read choice
+		case $choice in
+			[Yy] ) 	break 2;;
+			[Nn] ) 	break;;
+			 * )	echo -en "\tPlease answer Y or N."
+				mplayer /home/MP2/etc/invalid.wav >>/dev/null 2>>/dev/null;;
+		esac
+		done
+done
